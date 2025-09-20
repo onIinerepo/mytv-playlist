@@ -1,0 +1,32 @@
+name: Update Playlist
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # setiap 6 jam
+  workflow_dispatch:        # boleh run manual juga
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run script
+        run: python update_playlist.py
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add HK_official.m3u
+          git commit -m "Auto update playlist"
+          git push
